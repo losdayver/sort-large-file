@@ -1,0 +1,13 @@
+{
+    "name": "sort-large-file",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.mjs",
+    "scripts": {
+        "filegen": "generate_dataset.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {}
+}
