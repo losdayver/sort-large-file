@@ -1,6 +1,29 @@
 const fs = require('fs');
 const path = require('path');
 
+/* ОБЪЕКТ КОНФИГУРАЦИИ. ИЗМЕНЯЕТСЯ НАПРЯМУЮ ИЛИ ПАРАМЕТРАМИ CLI */
+var config = {
+    output_filepath: path.join("dataset", "output"),
+    max_storage: 200000
+}
+
+{
+    let argname = "";
+    for (let arg of process.argv.slice(2)) {
+        if (argname == "--output") {
+            config.output_filepath = arg;
+        }
+        else {
+
+        }
+
+        if (argname == "--max_storage") {
+            config.max_storage = Number(arg);
+        }
+        argname = arg;
+    }
+}
+
 function fillFile(filename, num_strings) {
     const allow_log = true;
 
@@ -33,7 +56,4 @@ function fillFile(filename, num_strings) {
     log("Конец генерации файла");
 }
 
-try {
-    fs.mkdirSync(path.join("dataset", "temp"), { recursive: true });
-} catch { }
 fillFile(path.join("dataset", "input"), 20000);

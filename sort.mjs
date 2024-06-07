@@ -4,6 +4,33 @@ import readline from "readline";
 
 "use strict";
 
+/* ОБЪЕКТ КОНФИГУРАЦИИ. ИЗМЕНЯЕТСЯ НАПРЯМУЮ ИЛИ ПАРАМЕТРАМИ CLI */
+var config = {
+    temp_dir: path.join("dataset", "temp"),
+    input_filepath: path.join("dataset", "input"),
+    output_filepath: path.join("dataset", "output"),
+    max_storage: 200000
+}
+
+{
+    let argname = "";
+    for (let arg of process.argv.slice(2)) {
+        if (argname == "--output") {
+            config.output_filepath = arg;
+        }
+        else if (argname == "--input") {
+            config.input_filepath = arg;
+        }
+        else if (argname == "--max_storage") {
+            config.max_storage = Number(arg);
+        }
+        else if (argname == "--temp_dir") {
+            config.temp_dir = arg;
+        }
+        argname = arg;
+    }
+}
+
 async function sortFile(temp_dir, input_filepath, output_filepath, max_storage, compare_func) {
     function log(message) {
         if (allow_log) console.log(message + ": " + new Date(new Date().toUTCString()));
@@ -20,7 +47,6 @@ async function sortFile(temp_dir, input_filepath, output_filepath, max_storage, 
                 fs.unlink(filePath, (err) => { });
             });
         });
-
     }
     const allow_log = true;
     const occupied_count = Math.floor(0.8 * max_storage);
@@ -168,27 +194,17 @@ async function sortFile(temp_dir, input_filepath, output_filepath, max_storage, 
                 free_space_lines.push(min_line);
 
                 if (free_space_lines.length == free_space_size) {
-                    //free_space_lines.sort((a, b) => compareStrings(a, b));
-
-                    free_space_lines.forEach((line) => {
-                        fs.appendFileSync(output_filepath, line + `\n`);
-                    });
-
+                    fs.appendFileSync(config.output_filepath, free_space_lines.join("\n") + "\n");
                     free_space_lines = [];
                 }
             }
         }
     }
 
+    await removeAllFilesAsync(temp_dir);
     log("Конец обработки");
 }
 
-sortFile(
-    path.join("dataset", "temp"),
-    path.join("dataset", "input"),
-    path.join("dataset", "output"),
-    20000,
-    function compareStrings(a, b) {
-        return a.toLowerCase().localeCompare(b.toLowerCase());
-    }
-);
+sortFile(...Object.values(config), function compareStrings(a, b) {
+    return a.toLowerCase().localeCompare(b.toLowerCase());
+});

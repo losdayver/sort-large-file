@@ -2,9 +2,10 @@
     "name": "sort-large-file",
     "version": "1.0.0",
     "description": "",
-    "main": "index.mjs",
+    "main": "sort.mjs",
     "scripts": {
-        "filegen": "generate_dataset.js"
+        "filegen": "generate_dataset.js",
+        "sortfile": "sort.js"
     },
     "keywords": [],
     "author": "",
